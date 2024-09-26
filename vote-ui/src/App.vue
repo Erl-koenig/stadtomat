@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue'
 import supabase from './services/supabase.ts'
 
 interface Category {
