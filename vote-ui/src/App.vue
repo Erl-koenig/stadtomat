@@ -1,47 +1,26 @@
-<script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import supabase from './services/supabase.ts'
-
-interface Category {
-  id: string
-  title: string
-  description: string
-  created_at: string
-}
-
-const categories = ref<Category[]>([]);
-
-async function getCategories() {
-  let { data, error } = await supabase
-    .from('category')
-    .select('*')
-  if (error) {
-    console.log(error)
-  } else {
-    categories.value = data as Category[]
-  }
-}
-
-onMounted(() => {
-  getCategories()
-})
-</script>
-
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <nav>
+      <a href="#" @click.prevent>
+        <img src="./assets/logo.png" class="logo" />
+      </a>
+      <ul>
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/additem">Add Item</router-link></li>
+        <li><router-link to="/allitems">AllItems</router-link></li>
+        <li><router-link to="/votes">Votes</router-link></li>
+      </ul>
+    </nav>
+
+    <router-view />
   </div>
-  <h2>Categories</h2>
-  <button type="button" @click="getCategories">Refresh</button>
-  <ul>
-    <li v-for="category in categories" :key="category.id"><b>{{ category.title }}:</b> {{ category.description }}</li>
-  </ul>
 </template>
+
+<script lang="ts">
+export default {
+  name: 'App',
+}
+</script>
 
 <style scoped>
 .logo {
@@ -55,7 +34,9 @@ onMounted(() => {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 10px;
 }
 </style>
