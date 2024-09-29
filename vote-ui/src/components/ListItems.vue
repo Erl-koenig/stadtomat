@@ -19,7 +19,7 @@
           <td>{{ item.category }}</td>
           <td>{{ item.tag }}</td>
           <td>
-            <img v-if="item.image" :src="item.image" alt="Item Image" class="item-image" />
+            <img v-if="item.image" :src="item.image" alt="Item Image" class="item-image" loading="lazy" />
           </td>
           <td>{{ formatDate(item.created_at) }}</td>
         </tr>
