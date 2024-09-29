@@ -41,8 +41,6 @@ export default defineComponent({
       const { data, error } = await supabase
         .from('piece')
         .select('id, title, description, category, tag, image, created_at');
-
-      console.log(data);
       if (error) {
         console.error('Error fetching items:', error);
       } else {
@@ -52,7 +50,6 @@ export default defineComponent({
             ...item,
             image: item.image ? `https://lzirjhubrvqfumpsmenv.supabase.co/storage/v1/object/public/piece_image/${item.image}` : null
           };
-          console.log(item);
         });
       }
     };
