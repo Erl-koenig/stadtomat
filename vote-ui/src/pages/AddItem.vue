@@ -5,13 +5,8 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import NewItemForm from '../components/NewItemForm.vue';
 
-export default {
-  name: 'additem',
-  components: {
-    NewItemForm,
-  },
-};
+
 </script>

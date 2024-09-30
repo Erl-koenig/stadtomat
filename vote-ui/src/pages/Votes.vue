@@ -4,8 +4,7 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'votes',
-};
+<script setup lang="ts">
+
+
 </script>
