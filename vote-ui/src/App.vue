@@ -18,10 +18,13 @@
 </template>
 
 
-<script lang="ts">
-export default {
-  name: 'App',
-}
+<script setup lang="ts">
+import { defineProps } from 'vue';
+import { RouterView } from 'vue-router';
+
+const props = defineProps<{
+  msg: string;
+}>();
 </script>
 
 <style scoped>
