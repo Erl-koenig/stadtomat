@@ -5,13 +5,8 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import ListItems from '../components/ListItems.vue';
 
-export default {
-  name: 'allitems',
-  components: {
-    ListItems,
-  },
-};
+
 </script>
