@@ -1,14 +1,7 @@
-<script lang="ts">
+<script setup lang="ts">
 import Button from '@/components/ui/button/Button.vue';
 import Categories from '../components/Categories.vue';
 
-
-export default {
-  name: 'Home',
-  components: {
-    Categories,
-  },
-};
 </script>
 
 <template>
