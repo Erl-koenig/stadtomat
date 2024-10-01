@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "stadtomat-scan"
+version = "0.1.0"
+description = ""
+authors = ["David Stäheli <david.staeheli@ost.ch>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.0"
+uvicorn = "^0.31.0"
+jinja2 = "^3.1.4"
+python-multipart = "^0.0.12"
+pyzbar = "^0.1.9"
+opencv-python = "^4.10.0.84"
+numpy = "^2.1.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6.8"
+black = "^24.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
