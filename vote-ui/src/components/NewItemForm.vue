@@ -33,9 +33,9 @@
       <br>
       <br>
       <!-- File upload -->
-      <div class="grid w-full max-w-sm items-center gap-1.5">
-        <Label for="picture">Picture</Label>
-        <Input id="image" type="file" @change="handleImageUpload" />
+      <div>
+        <Label for="image">Picture</Label>
+        <Input id="image" type="file" @change="handleImageUpload" :key="fileInputKey" />
       </div>
       <!-- Submit Button -->
       <Button type="submit">Submit</Button>
@@ -76,6 +76,7 @@ const { handleSubmit } = useForm({
 })
 
 const imageFile = ref<File | null>(null)
+const fileInputKey = ref(0) // Key for the file input
 
 // Handle image upload event
 const handleImageUpload = (event: Event) => {
@@ -119,9 +120,11 @@ const onSubmit = handleSubmit(async (values) => {
 
     if (insertError) throw insertError
 
+    // Reset form fields
     title.value = '';
     description.value = '';
-    imageFile.value = null;
+    fileInputKey.value++; // Increment key to reset the file input
+    imageFile.value = null; // Clear the image file reference
     alert('Item added successfully!')
   } catch (error) {
     alert(`Error: ${(error as Error).message}`)
