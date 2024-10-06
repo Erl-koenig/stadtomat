@@ -84,7 +84,6 @@
 <script setup lang="ts">
 import { h, ref, onMounted } from 'vue';
 import supabase from '../services/supabase.ts';
-
 import {
   createColumnHelper,
   useVueTable,
@@ -105,7 +104,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
 import { cn } from '../lib/utils';
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown } from 'lucide-vue-next';
 
 export interface Item {
   id: string;
@@ -126,7 +125,9 @@ const fetchItems = async () => {
   if (error) {
     console.error('Error fetching items:', error);
   }
-
+  if (!data) {
+    return [];
+  }
   return data.map(item => ({
     ...item,
     image: item.image
@@ -158,34 +159,91 @@ const columns = [
     header: 'Image',
     cell: ({ row }) => {
       const image = row.getValue('image');
-      return image ? h('img', { src: image, alt: 'Item Image', class: 'item-image' }) : 'No Image';
+      return image ? h('img', { src: image, alt: 'Item Image', class: 'max-w-[100px] h-auto' }) : 'No Image';  
     },
-  }),
-  columnHelper.accessor('upvote_count', {
-    header: 'Upvotes',
-    cell: ({ row }) => row.getValue('upvote_count'),
   }),
   columnHelper.accessor('created_at', {
     header: 'Created At',
     cell: ({ row }) => formatDate(row.getValue('created_at')),
   }),
+  columnHelper.accessor('upvote_count', {
+    header: 'Upvotes',
+    cell: ({ row }) => row.getValue('upvote_count'),
+  }),
+  columnHelper.display({
+    header: 'Action',
+    cell: ({ row }) => {
+      const itemId = row.original.id;
+      const hasVoted = ref(checkIfVoted(itemId));  
+
+      return h(Button, {
+        disabled: hasVoted.value,
+        onClick: async () => {
+          await handleVote(itemId, hasVoted.value);
+          hasVoted.value = true;  
+        },
+      }, hasVoted.value ? 'Voted' : 'Vote');
+    },
+  }),
 ];
 
-// Date formatting 
 const formatDate = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-// Reactive state
+const checkIfVoted = (itemId: string) => {
+  const votedItems = JSON.parse(localStorage.getItem('votedItems') || '[]');
+  return votedItems.includes(itemId);
+};
+
+const handleVote = async (itemId: string, hasVoted: boolean) => {
+  const votedItems = JSON.parse(localStorage.getItem('votedItems') || '[]');
+
+  try {
+    const { data: item, error: fetchError } = await supabase
+      .from('piece')
+      .select('upvote_count')
+      .eq('id', itemId)
+      .single();
+
+    if (fetchError) {
+      console.error('Error fetching upvote count:', fetchError);
+      return;
+    }
+
+    const currentUpvoteCount = item?.upvote_count || 0;
+    const newUpvoteCount = hasVoted ? currentUpvoteCount - 1 : currentUpvoteCount + 1;
+
+    const { error: updateError } = await supabase
+      .from('piece')
+      .update({ upvote_count: newUpvoteCount })
+      .eq('id', itemId);
+
+    if (updateError) {
+      console.error('Error updating vote count:', updateError);
+      return;
+    }
+
+    if (hasVoted) {
+      const updatedVotedItems = votedItems.filter(id => id !== itemId);
+      localStorage.setItem('votedItems', JSON.stringify(updatedVotedItems));
+    } else {
+      votedItems.push(itemId);
+      localStorage.setItem('votedItems', JSON.stringify(votedItems));
+    }
+
+  } catch (error) {
+    console.error('Error handling vote:', error);
+  }
+};
+
 const data = ref<Item[]>([]);
 
-// Fetch data when component mounts
 onMounted(async () => {
   data.value = await fetchItems();
 });
 
-// Create table
 const table = useVueTable({
   data: data,
   columns,
@@ -193,11 +251,5 @@ const table = useVueTable({
   getPaginationRowModel: getPaginationRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
 });
-</script>
 
-<style scoped>
-.item-image {
-  max-width: 100px;
-  height: auto;
-}
-</style>
+</script>
