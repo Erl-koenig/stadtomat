@@ -1,99 +1,144 @@
 <template>
   <div class="new-item-form">
-    <h2>Add New Item</h2>
-    <form @submit.prevent="handleSubmit">
+    <form @submit="onSubmit">
+      <!-- Title Field -->
+      <FormField v-slot="{ field }" name="title">
+        <FormItem>
+          <FormLabel>Title</FormLabel>
+          <FormControl>
+            <Input v-bind="field" type="text" id="title" placeholder="Item title" />
+          </FormControl>
+          <FormDescription>
+            The name of your item. Must be at least 2 characters long.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+      <br>
+      <br>
+      <!-- Description Field -->
+      <FormField v-slot="{ field }" name="description">
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <textarea v-bind="field" id="description" placeholder="Item description"
+              class="border rounded-md p-2 w-full"></textarea>
+          </FormControl>
+          <FormDescription>
+            Describe your item in detail. Minimum of 5 characters.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+      <br>
+      <br>
+      <!-- File upload -->
       <div>
-        <label for="title">Title:</label>
-        <input type="text" id="title" v-model="title" required />
+        <Label for="image">Picture</Label>
+        <Input id="image" type="file" @change="handleImageUpload" :key="fileInputKey" />
       </div>
-      <div>
-        <label for="description">Description:</label>
-        <textarea id="description" v-model="description" required></textarea>
-      </div>
-      <div>
-        <label for="image">Upload Image:</label>
-        <input type="file" id="image" @change="handleImageUpload" />
-      </div>
-      <button type="submit">Submit</button>
+      <!-- Submit Button -->
+      <Button type="submit">Submit</Button>
     </form>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import supabase from '../services/supabase';
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import * as z from 'zod'
+import supabase from '../services/supabase'
 
-export default defineComponent({
-  setup() {
-    const title = ref('');
-    const description = ref('');
-    const imageFile = ref<File | null>(null);
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from '@/components/ui/form'
 
-    const handleImageUpload = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      if (target.files && target.files[0]) {
-        imageFile.value = target.files[0];
-      }
-    };
+// Define form validation schema with Zod
+const formSchema = toTypedSchema(
+  z.object({
+    title: z.string().min(2, 'Title must be at least 2 characters').max(50, 'Title is too long'),
+    description: z.string().min(5, 'Description must be at least 5 characters').max(500, 'Description is too long'),
+  })
+)
 
-    const handleSubmit = async () => {
-      if (!title.value || !description.value || !imageFile.value) {
-        alert('Fill out all fields');
-        return;
-      }
+// Setup form handling with vee-validate
+const { handleSubmit } = useForm({
+  validationSchema: formSchema,
+})
 
-      try {
-        // Unique file name with timestamp (to avoid conflicts)
-        const uniqueFileName = `${Date.now()}-${imageFile.value.name}`;
+const imageFile = ref<File | null>(null)
+const fileInputKey = ref(0) // Key for the file input
 
-        // Upload image to Supabase storage
-        const { data: imageData, error: uploadError } = await supabase.storage
-          .from('piece_image')
-          .upload(`public/${uniqueFileName}`, imageFile.value);
+// Handle image upload event
+const handleImageUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    imageFile.value = target.files[0]
+  }
+}
 
-        if (uploadError) throw uploadError;
+// Handle form submission
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    if (!imageFile.value) {
+      alert('Please upload an image.')
+      return
+    }
 
-        const imageUrl = imageData?.path;
+    // Unique file name with timestamp (to avoid conflicts)
+    const uniqueFileName = `${Date.now()}-${imageFile.value.name}`
 
-        // Insert item info to db
-        const { error: insertError } = await supabase
-          .from('piece')
-          .insert([
-            {
-              title: title.value,
-              description: description.value,
-              image: imageUrl,
-              category: null,
-              tag: null,
-            },
-          ]);
+    // Upload image to Supabase storage
+    const { data: imageData, error: uploadError } = await supabase.storage
+      .from('piece_image')
+      .upload(`public/${uniqueFileName}`, imageFile.value)
 
-        if (insertError) throw insertError;
+    if (uploadError) throw uploadError
 
-        // Clear form
-        title.value = '';
-        description.value = '';
-        imageFile.value = null;
-        alert('Item added successfully!');
-      } catch (error) {
-        alert(`Error: ${(error as Error).message}`);
-      }
-    };
+    const imageUrl = imageData?.path
 
-    return {
-      title,
-      description,
-      handleImageUpload,
-      handleSubmit,
-    };
-  },
-});
+    // Insert item info to db
+    const { error: insertError } = await supabase
+      .from('piece')
+      .insert([
+        {
+          ...values,
+          image: imageUrl,
+          category: null,
+          tag: null,
+        }
+      ])
+
+    if (insertError) throw insertError
+
+    // Reset form fields
+    title.value = '';
+    description.value = '';
+    fileInputKey.value++; // Increment key to reset the file input
+    imageFile.value = null; // Clear the image file reference
+    alert('Item added successfully!')
+  } catch (error) {
+    alert(`Error: ${(error as Error).message}`)
+  }
+})
 </script>
 
 <style scoped>
-.new-item-form {
-  max-width: 400px;
-  margin: 0 auto;
+textarea {
+  width: 100%;
+  min-height: 80px;
+}
+
+button {
+  margin-top: 1rem;
 }
 </style>
-
