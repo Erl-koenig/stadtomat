@@ -7,7 +7,7 @@
       <ul>
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/additem">Add Item</router-link></li>
-        <li><router-link to="/allitems">All Items</router-link></li>
+        <!-- <li><router-link to="/allitems">All Items</router-link></li> -->
         <li><router-link to="/votes">Votes</router-link></li>
       </ul>
     </nav>
@@ -19,12 +19,8 @@
 
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import { RouterView } from 'vue-router';
 
-const props = defineProps<{
-  msg: string;
-}>();
 </script>
 
 <style scoped>
