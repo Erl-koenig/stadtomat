@@ -22,7 +22,7 @@
           <FormLabel>Description</FormLabel>
           <FormControl>
             <textarea v-bind="field" id="description" placeholder="Item description"
-              class="border rounded-md p-2 w-full"></textarea>
+              class="border rounded-md p-2 w-full min-h-[80px]"></textarea>
           </FormControl>
           <FormDescription>
             Describe your item in detail. Minimum of 5 characters.
@@ -37,12 +37,15 @@
         <Label for="image">Picture</Label>
         <Input id="image" type="file" @change="handleImageUpload" :key="fileInputKey" />
       </div>
-      <!-- Submit Button -->
-      <Button type="submit">Submit</Button>
+
+      <!-- Buttons -->
+      <div class="flex justify-between mt-4">
+        <Button type="button" @click="clearForm" class="bg-gray-500 text-white">Clear</Button>
+        <Button type="submit">Submit</Button>
+      </div>
     </form>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
@@ -71,7 +74,7 @@ const formSchema = toTypedSchema(
 )
 
 // Setup form handling with vee-validate
-const { handleSubmit } = useForm({
+const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
 })
 
@@ -84,6 +87,11 @@ const handleImageUpload = (event: Event) => {
   if (target.files && target.files[0]) {
     imageFile.value = target.files[0]
   }
+}
+const clearForm = () => {
+  resetForm()
+  imageFile.value = null;
+  fileInputKey.value++;
 }
 
 // Handle form submission
@@ -120,25 +128,11 @@ const onSubmit = handleSubmit(async (values) => {
 
     if (insertError) throw insertError
 
-    // Reset form fields
-    title.value = '';
-    description.value = '';
-    fileInputKey.value++; // Increment key to reset the file input
-    imageFile.value = null; // Clear the image file reference
+    clearForm();
     alert('Item added successfully!')
   } catch (error) {
     alert(`Error: ${(error as Error).message}`)
   }
+
 })
 </script>
-
-<style scoped>
-textarea {
-  width: 100%;
-  min-height: 80px;
-}
-
-button {
-  margin-top: 1rem;
-}
-</style>
