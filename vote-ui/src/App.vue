@@ -1,79 +1,35 @@
 <template>
-  <div id="app">
-    <nav class="vertical-navbar">
+  <div id="app" class="flex max-w-screen-xl mx-auto p-8">
+    <nav class="w-72 pl-8 pr-8 bg-darkest h-screen fixed top-0 left-0">
       <a href="#" @click.prevent>
-        <img src="./assets/logo.png" class="logo" />
+        <img src="./assets/logo.png"
+          class="logo h-auto 40 p-6 transition filter duration-300 hover:drop-shadow-[0_0_2em_rgba(108,133,158,0.67)]" />
       </a>
-      <ul>
-        <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/additem">Add Item</router-link></li>
-        <!-- <li><router-link to="/allitems">All Items</router-link></li> -->
-        <li><router-link to="/votes">Votes</router-link></li>
+      <div class="border-b border-medium my-4"></div>
+      <ul class="list-none p-0 flex flex-col items-center mt-4">
+        <li class="my-4">
+          <router-link to="/" class="font-medium text-light hover:text-medium" active-class="text-lightest">
+            Home
+          </router-link>
+        </li>
+        <li class="my-4">
+          <router-link to="/additem" class="font-medium text-light hover:text-medium" active-class="text-lightest">
+            Add Item
+          </router-link>
+        </li>
+        <li class="my-4">
+          <router-link to="/votes" class="font-medium text-light hover:text-medium" active-class="text-lightest">
+            Votes
+          </router-link>
+        </li>
       </ul>
     </nav>
-    <div class="content">
+    <div class="ml-56 p-8 flex-grow">
       <router-view />
     </div>
   </div>
 </template>
-
-
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 
 </script>
-
-<style scoped>
-#app {
-  display: flex;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.vertical-navbar {
-  width: 200px;
-  padding-right: 2rem;
-  background-color: #1a1a1a;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
-.vertical-navbar ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.vertical-navbar li {
-  margin: 15px 0;
-}
-
-.content {
-  margin-left: 220px;
-  padding: 2rem;
-  flex-grow: 1;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-</style>
