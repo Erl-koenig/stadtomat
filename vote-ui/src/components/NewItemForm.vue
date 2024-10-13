@@ -40,8 +40,8 @@
 
       <!-- Buttons -->
       <div class="flex justify-between mt-4">
-        <Button type="button" @click="clearForm" class="bg-gray-500 text-white">Clear</Button>
-        <Button type="submit">Submit</Button>
+        <Button type="button" @click="clearForm" class="bg-medium text-white hover:bg-light">Clear</Button>
+        <Button type="submit" class="bg-darkest hover:bg-light">Submit</Button>
       </div>
     </form>
   </div>

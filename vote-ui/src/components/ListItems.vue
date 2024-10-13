@@ -159,7 +159,7 @@ const columns = [
     header: 'Image',
     cell: ({ row }) => {
       const image = row.getValue('image');
-      return image ? h('img', { src: image, alt: 'Item Image', class: 'max-w-[100px] h-auto' }) : 'No Image';  
+      return image ? h('img', { src: image, alt: 'Item Image', class: 'max-w-[100px] h-auto' }) : 'No Image';
     },
   }),
   columnHelper.accessor('created_at', {
@@ -174,13 +174,13 @@ const columns = [
     header: 'Action',
     cell: ({ row }) => {
       const itemId = row.original.id;
-      const hasVoted = ref(checkIfVoted(itemId));  
+      const hasVoted = ref(checkIfVoted(itemId));
 
       return h(Button, {
         disabled: hasVoted.value,
         onClick: async () => {
           await handleVote(itemId, hasVoted.value);
-          hasVoted.value = true;  
+          hasVoted.value = true;
         },
       }, hasVoted.value ? 'Voted' : 'Vote');
     },
