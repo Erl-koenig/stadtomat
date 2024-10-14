@@ -43,10 +43,14 @@ jobs:
 
       - name: Tag Docker image with version
         run: |
-          TAG_VERSION=${GITHUB_REF#refs/tags/}
-          docker tag vote-ui:latest ghcr.io/${{ github.repository }}:${TAG_VERSION}
-          docker tag vote-ui:latest ghcr.io/${{ github.repository }}:latest
-          echo "tag version: $TAG_VERSION"
+            TAG_VERSION=${GITHUB_REF#refs/tags/v}
+            echo "tag version: $TAG_VERSION"
+            repo=${{ github.repository }}
+            lower_repo=$(echo "$repo" | tr '[:upper:]' '[:lower:]')
+            echo "lower repo: $lower_repo"
+            docker tag vote-ui:latest ghcr.io/${lower_repo}:${TAG_VERSION}
+            docker tag vote-ui:latest ghcr.io/${lower_repo}:latest
+            
         working-directory: ./vote-ui
 
       - name: Login to GitHub Container Registry
