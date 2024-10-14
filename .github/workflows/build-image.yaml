@@ -29,6 +29,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set version environment variable
+        run: |
+          echo "TAG_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+          echo "current version: ${{ env.TAG_VERSION }}"
+
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
@@ -43,12 +48,11 @@ jobs:
 
       - name: Tag Docker image with version
         run: |
-            TAG_VERSION=${GITHUB_REF#refs/tags/v}
+            TAG_VERSION=${{ env.TAG_VERSION }}
             echo "tag version: $TAG_VERSION"
             repo=${{ github.repository }}
             lower_repo=$(echo "$repo" | tr '[:upper:]' '[:lower:]')
-            echo "lower repo: $lower_repo"
-            docker tag vote-ui:latest ghcr.io/${lower_repo}:${TAG_VERSION}
+            docker tag vote-ui:latest ghcr.io/${lower_repo}:${{ env.TAG_VERSION }}
             docker tag vote-ui:latest ghcr.io/${lower_repo}:latest
             
         working-directory: ./vote-ui
@@ -60,6 +64,6 @@ jobs:
       - name: Push Docker image with version tag
         run: |
           TAG_VERSION=${GITHUB_REF#refs/tags/}
-          docker push ghcr.io/${{ github.repository }}:${TAG_VERSION}
+          docker push ghcr.io/${{ github.repository }}:${{ env.TAG_VERSION }}
           docker push ghcr.io/${{ github.repository }}:latest
         working-directory: ./vote-ui
