@@ -226,7 +226,7 @@ const handleVote = async (itemId: string, hasVoted: boolean) => {
     }
 
     if (hasVoted) {
-      const updatedVotedItems = votedItems.filter(id => id !== itemId);
+      const updatedVotedItems = votedItems.filter((id: string) => id !== itemId);
       localStorage.setItem('votedItems', JSON.stringify(updatedVotedItems));
     } else {
       votedItems.push(itemId);
