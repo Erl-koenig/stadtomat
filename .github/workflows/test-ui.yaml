@@ -1,0 +1,36 @@
+name: Test and Build Vite Application
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - docker-image
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-ui:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./vote-ui
+
+    # - name: Run tests
+    #   run: npm test
+    #   working-directory: ./vote-ui
+
+    - name: Build application
+      run: npm run build
+      working-directory: ./vote-ui
