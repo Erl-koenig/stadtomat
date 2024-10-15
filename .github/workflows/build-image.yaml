@@ -12,6 +12,9 @@ jobs:
       contents: read
       packages: write
 
+    env:
+      VITE_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
