@@ -23,13 +23,19 @@
           </router-link>
         </li>
       </ul>
+      <div class="absolute bottom-5 p-0 w-4/5">
+        <p class="text-light text-center">Version: {{ version }}</p>
+      </div>
     </nav>
-    <div class="ml-56 p-8 flex-grow">
+    <div class="ml-56 p-8 pl-16 flex-grow">
       <router-view />
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
+import packageJson from '../package.json';
+
+const version = packageJson.version;
 
 </script>
