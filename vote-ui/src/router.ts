@@ -26,6 +26,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "Votes",
     component: Votes,
   },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: () => import("./pages/Admin.vue"), // Lazy loading
+  }
 ];
 
 const router = createRouter({
