@@ -22,6 +22,11 @@
             Votes
           </router-link>
         </li>
+        <li class="my-4">
+          <router-link to="/admin" class="font-medium text-light hover:text-medium" active-class="text-lightest">
+            Admin
+          </router-link>
+        </li>
       </ul>
       <div class="absolute bottom-5 p-0 w-4/5">
         <p class="text-light text-center">Version: {{ version }}</p>
