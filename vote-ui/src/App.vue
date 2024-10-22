@@ -60,7 +60,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterView } from 'vue-router';
-import packageJson from '../package.json';
 
 const isMenuOpen = ref(false);
 const toggleMenu = () => {
@@ -70,5 +69,4 @@ const closeMenu = () => {
   isMenuOpen.value = false;
 };
 
-const version = packageJson.version;
 </script>
