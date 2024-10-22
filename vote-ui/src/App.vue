@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="p-12">
-    <nav
+    <nav id="nav"
       class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="#" @click.prevent class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -47,12 +47,11 @@
                 Votes
               </router-link>
             </li>
-
           </ul>
         </div>
       </div>
     </nav>
-    <div class="ml-5 p-8 pl-16 flex-grow">
+    <div class="ml-5 p-8 pl-0 flex-grow">
       <router-view />
     </div>
   </div>
@@ -62,5 +61,6 @@ import { RouterView } from 'vue-router';
 import packageJson from '../package.json';
 
 const version = packageJson.version;
+
 
 </script>
