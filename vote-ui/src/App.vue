@@ -7,13 +7,13 @@
           <img src="./assets/logo.png"
             class="logo h-28 p-6 transition filter duration-300 hover:drop-shadow-[0_0_2em_rgba(108,133,158,0.67)]"
             alt="Stadtomat Logo" />
-          <!-- <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"></span> -->
         </a>
         <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           <button type="button"
-            class="text-white bg-ostMain hover:bg-ostSecondary focus:ring-2 focus:outline-none focus:ring-ostDark font-medium rounded-lg text-sm px-4 py-2 text-center">Contact
+            class="text-white bg-ostMain hover:bg-ostSecondary focus:ring-2 focus:outline-none focus:ring-ostDark font-medium rounded-lg text-sm px-4 py-2 text-center">
+            Contact
           </button>
-          <button data-collapse-toggle="navbar-sticky" type="button"
+          <button @click="toggleMenu" type="button"
             class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
             aria-controls="navbar-sticky" aria-expanded="false">
             <span class="sr-only">Open main menu</span>
@@ -23,25 +23,26 @@
             </svg>
           </button>
         </div>
-        <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
+        <div :class="{ 'hidden': !isMenuOpen, 'block': isMenuOpen }"
+          class="items-center justify-between w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
           <ul
             class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             <li>
-              <router-link to="/"
+              <router-link @click="closeMenu" to="/"
                 class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-ostSecondary md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 active-class="text-ostMain">
                 Home
               </router-link>
             </li>
             <li>
-              <router-link to="/additem"
+              <router-link @click="closeMenu" to="/additem"
                 class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-ostSecondary md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 active-class="text-ostMain">
                 Add Item
               </router-link>
             </li>
             <li>
-              <router-link to="/votes"
+              <router-link @click="closeMenu" to="/votes"
                 class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-ostSecondary md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 active-class="text-ostMain">
                 Votes
@@ -57,10 +58,17 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue';
 import { RouterView } from 'vue-router';
 import packageJson from '../package.json';
 
+const isMenuOpen = ref(false);
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+const closeMenu = () => {
+  isMenuOpen.value = false;
+};
+
 const version = packageJson.version;
-
-
 </script>
