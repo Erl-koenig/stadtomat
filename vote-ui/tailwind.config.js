@@ -2,6 +2,7 @@ const animate = require("tailwindcss-animate");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   darkMode: ["class"],
   safelist: ["dark"],
   prefix: "",
@@ -28,6 +29,10 @@ module.exports = {
         medium: "#6C859E",
         dark: "#46525E",
         darkest: "#12212D",
+
+        ostMain: "#d82a65",
+        ostSecondary: "#8d185f",
+        ostDark: "#1a1a1a",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -97,4 +102,3 @@ module.exports = {
   },
   plugins: [animate],
 };
-
