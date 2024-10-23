@@ -49,11 +49,34 @@ class PieceService {
     }
 
 
-    async updatePieceUpvoteCount(id: string, upvoteCount: number): Promise<void> {
-        await supabase
+    async updatePieceUpvoteCount(id: string, upvoteCount: number): Promise<boolean> {
+        const { data, error } = await supabase
             .from('piece')
             .update({ upvote_count: upvoteCount })
             .eq('id', id);
+        if (error) {
+            console.error('Error updating item:', error);
+            return false;
+        }
+        return true;
+
+    }
+
+    async updatePiece(piece: Piece): Promise<any> {
+        const { data, error } = await supabase
+            .from('piece')
+            .update({
+                title: piece.title,
+                description: piece.description,
+                category: piece.category,
+                tag: piece.tag,
+                image: piece.image,
+            })
+            .eq('id', piece.id);
+        if (error) {
+            console.error('Error updating item:', error);
+        }
+        return data;
     }
 
     async fetchPieceById(id: string): Promise<Piece | null> {
