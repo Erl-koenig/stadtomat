@@ -12,15 +12,14 @@ import { pieceService } from '@/services/pieceService';
 import { Piece } from '@/types';
 import { createColumnHelper, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useVueTable, FlexRender } from '@tanstack/vue-table';
 import { h, onMounted, ref } from 'vue';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import EditPiece from './EditPiece.vue';
 
 const pieces = ref<Piece[]>([]);
+
 
 const getPieces = async () => {
     try {
         const res = await pieceService.fetchPieces();
-        console.log(pieces);
         if (res) {
             pieces.value = res;
         }
@@ -33,16 +32,6 @@ onMounted(() => {
     getPieces();
 });
 
-async function onInputChange(event: { target: { value: string | any[]; }; }) {
-    if (event.target.value.length > 2) {
-        const res = await pieceService.searchPieces(event.target.value);
-        if (res) {
-            pieces.value = res;
-        } else {
-            pieces.value = [];
-        }
-    }
-}
 
 const columnHelper = createColumnHelper<Piece>();
 const columns = [
@@ -80,16 +69,17 @@ const columns = [
     columnHelper.display({
         header: 'Action',
         cell: ({ row }) => {
-            const itemId = row.original.id;
-            const hasVoted = ref(checkIfVoted(itemId));
 
-            return h(Button, {
-                disabled: hasVoted.value,
-                onClick: async () => {
-                    console.log("Vote do");
-
+            return h(EditPiece, {
+                piece: row.original,
+                'onUpdate:piece': (updatedPiece: Piece) => {
+                    const index = pieces.value.findIndex((p) => p.id === updatedPiece.id);
+                    if (index !== -1) {
+                        pieces.value[index] = updatedPiece;
+                        console.log('Updated piece:', updatedPiece);
+                    }
                 },
-            }, hasVoted.value ? 'Voted' : 'Vote');
+            });
         },
     }),
 ];
@@ -97,11 +87,6 @@ const columns = [
 const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-const checkIfVoted = (itemId: string) => {
-    const votedItems = JSON.parse(localStorage.getItem('votedItems') || '[]');
-    return votedItems.includes(itemId);
 };
 
 const table = useVueTable({
@@ -116,12 +101,7 @@ const table = useVueTable({
 
 <template>
     <div class="w-full">
-        <div class="flex gap-2 items-center justify-between">
-            <Input @input="onInputChange" placeholder="Search" />
-            <h1 class="text-2xl font-bold">Admin</h1>
-        </div>
         <div v-if="pieces">
-            <p>Show pieces</p>
             <Table>
                 <TableHeader>
                     <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
