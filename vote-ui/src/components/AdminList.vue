@@ -6,9 +6,13 @@ import { createColumnHelper } from '@tanstack/vue-table';
 import { h, onMounted, ref } from 'vue';
 import EditPiece from './EditPiece.vue';
 import DataTable from './DataTable.vue';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 const pieces = ref<Piece[]>([]);
-
+const username = ref('');
+const password = ref('');
+const loggedIn = ref(false);
 
 const getPieces = async () => {
     try {
@@ -35,7 +39,12 @@ const updatePiece = async (updatedPiece: Piece) => {
 };
 
 onMounted(() => {
-    getPieces();
+    if (loggedIn.value) {
+        getPieces();
+    } else {
+        console.log('Not logged in');
+    }
+
 });
 
 
@@ -91,12 +100,45 @@ const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+function doLogin() {
+    console.log('Logging in...');
+    if (username.value === 'admin' && password.value === 'admin') {
+        loggedIn.value = true;
+        getPieces();
+    }
+
+}
+
 </script>
 
 <template>
-    <div class="">
-        <div v-if="pieces">
-            <DataTable :columns="columns" :data="pieces" />
+    <template v-if="!loggedIn">
+        <div class="w-full">
+            <div class="grid gap-4 py-4">
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label for="username" class="text-right">
+                        Username
+                    </Label>
+                    <Input id="username" v-model="username" class="col-span-3" />
+                </div>
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label for="password" class="text-right">
+                        Password
+                    </Label>
+                    <Input id="password" v-model="password" class="col-span-3" />
+                </div>
+                <div class="grid grid-cols-2 items-center gap-4">
+                    <Button class="bg-green-800" type="button" @click="doLogin">Log In</Button>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </template>
+    <template v-else>
+        <div class="">
+            <div v-if="pieces">
+                <DataTable :columns="columns" :data="pieces" />
+            </div>
+        </div>
+    </template>
 </template>
