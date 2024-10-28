@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHeader,
-    TableHead,
-    TableRow,
-} from '@/components/ui/table';
-import { cn } from '@/lib/utils';
+
 import { pieceService } from '@/services/pieceService';
 import { Piece } from '@/types';
-import { createColumnHelper, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useVueTable, FlexRender } from '@tanstack/vue-table';
+import { createColumnHelper } from '@tanstack/vue-table';
 import { h, onMounted, ref } from 'vue';
 import EditPiece from './EditPiece.vue';
+import DataTable from './DataTable.vue';
 
 const pieces = ref<Piece[]>([]);
 
@@ -25,6 +18,19 @@ const getPieces = async () => {
         }
     } catch (error) {
         console.error('Error fetching pieces:', error);
+    }
+};
+
+const updatePiece = async (updatedPiece: Piece) => {
+    const index = pieces.value.findIndex((p) => p.id === updatedPiece.id);
+    try {
+        const res = await pieceService.updatePiece(updatedPiece);
+        if (index !== -1) {
+            pieces.value[index] = res;
+            console.log(res);
+        }
+    } catch (error) {
+        console.error('Error updating piece:', error);
     }
 };
 
@@ -69,71 +75,28 @@ const columns = [
     columnHelper.display({
         header: 'Action',
         cell: ({ row }) => {
-
             return h(EditPiece, {
                 piece: row.original,
                 'onUpdate:piece': (updatedPiece: Piece) => {
-                    const index = pieces.value.findIndex((p) => p.id === updatedPiece.id);
-                    if (index !== -1) {
-                        pieces.value[index] = updatedPiece;
-                        console.log('Updated piece:', updatedPiece);
-                    }
+                    updatePiece(updatedPiece);
                 },
             });
         },
     }),
 ];
 
+
 const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-const table = useVueTable({
-    data: pieces,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-})
-
 </script>
 
 <template>
-    <div class="w-full">
+    <div class="">
         <div v-if="pieces">
-            <Table>
-                <TableHeader>
-                    <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-                        <TableHead v-for="header in headerGroup.headers" :key="header.id" :class="cn({
-                            'sticky bg-background/95': header.column.getIsPinned(),
-                            'left-0': header.column.getIsPinned() === 'left',
-                            'right-0': header.column.getIsPinned() === 'right',
-                        })">
-                            <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header"
-                                :props="header.getContext()" />
-                        </TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    <template v-for="row in table.getRowModel().rows" :key="row.id">
-                        <TableRow :data-state="row.getIsSelected() && 'selected'">
-                            <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id" :class="cn({
-                                'sticky bg-background/95': cell.column.getIsPinned(),
-                                'left-0': cell.column.getIsPinned() === 'left',
-                                'right-0': cell.column.getIsPinned() === 'right',
-                            })">
-                                <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                            </TableCell>
-                        </TableRow>
-                        <TableRow v-if="row.getIsExpanded()">
-                            <TableCell :colspan="row.getAllCells().length">
-                                {{ row.original }}
-                            </TableCell>
-                        </TableRow>
-                    </template>
-                </TableBody>
-            </Table>
+            <DataTable :columns="columns" :data="pieces" />
         </div>
     </div>
 </template>

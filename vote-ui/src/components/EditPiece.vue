@@ -63,18 +63,31 @@ const savePiece = () => {
             </DialogHeader>
 
             <div div="w-full">
-                <div class="flex gap-2 items-center py-4" v-if="localPiece">
-                    <Input v-model="localPiece.title" label="Title" />
-                    <Input v-model="localPiece.description" label="Description" />
-                    <!-- <Input v-model="localPiece.category" label="Category" /> -->
-                    <!-- TODO: make dropdown for Category -->
-                    <Input v-model="localPiece.tag" label="Tag" />
-                    <Input v-model="imageModel" label="Image" />
+                <div class="flex flex-wrap gap-2 items-center py-4 mb-2" v-if="localPiece">
+                    <div class="w-full">
+                        <label>Title: </label>
+                        <Input v-model="localPiece.title" label="Title" />
+                    </div>
+                    <div>
+                        <label>Description: </label>
+                        <textarea v-model="localPiece.description" label="Description"></textarea>
+                    </div>
+                    <div>
+                        <label>Tag: </label>
+                        <Input v-model="localPiece.tag" label="Tag" />
+                    </div>
+                    <div>
+                        <label>Image: </label>
+                        <Input v-model="imageModel" label="Image" />
+                    </div>
                 </div>
             </div>
             <DialogFooter>
                 <DialogClose>
-                    <Button type="button" @click="savePiece">Save</Button>
+                    <Button type="button"
+                        class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                        @click="savePiece">Save</Button>
+                    <Button type="button">Cancel</Button>
                 </DialogClose>
             </DialogFooter>
         </DialogContent>
