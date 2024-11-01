@@ -28,6 +28,9 @@
           </router-link>
         </li>
       </ul>
+      <div v-if="loginService.isLoggedIn() === true" class="border-t border-medium my-4">
+        <button type="button" @click="loginService.logout" class="w-full text-light hover:text-lightest">Logout</button>
+      </div>
       <div class="absolute bottom-5 p-0 w-4/5">
         <p class="text-light text-center">Version: {{ version }}</p>
       </div>
@@ -40,7 +43,9 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import packageJson from '../package.json';
-
+import { loginService } from './services/loginService';
 const version = packageJson.version;
+
+
 
 </script>
