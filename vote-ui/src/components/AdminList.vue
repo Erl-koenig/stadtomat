@@ -125,7 +125,7 @@ function doLogin() {
                     <Label for="password" class="text-right">
                         Password
                     </Label>
-                    <Input id="password" v-model="password" class="col-span-3" />
+                    <Input type="password" id="password" v-model="password" class="col-span-3" />
                 </div>
                 <div class="grid grid-cols-2 items-center gap-4">
                     <Button class="bg-green-800" type="button" @click="doLogin">Log In</Button>
