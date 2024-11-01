@@ -8,6 +8,7 @@ import EditPiece from './EditPiece.vue';
 import DataTable from './DataTable.vue';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { loginService } from '@/services/loginService';
 
 const pieces = ref<Piece[]>([]);
 const username = ref('');
@@ -39,6 +40,7 @@ const updatePiece = async (updatedPiece: Piece) => {
 };
 
 onMounted(() => {
+    loggedIn.value = loginService.isLoggedIn();
     if (loggedIn.value) {
         getPieces();
     } else {
@@ -102,10 +104,12 @@ const formatDate = (dateString: string) => {
 
 function doLogin() {
     console.log('Logging in...');
-    if (username.value === 'admin' && password.value === 'admin') {
-        loggedIn.value = true;
-        getPieces();
-    }
+    loginService.login(username.value, password.value).then((res) => {
+        loggedIn.value = loginService.isLoggedIn();
+        if (res) {
+            getPieces();
+        }
+    });
 
 }
 
