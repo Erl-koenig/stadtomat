@@ -101,6 +101,18 @@ class PieceService {
         };
     }
 
+    async deletePiece(id: string): Promise<boolean> {
+        const { error } = await supabase
+            .from('piece')
+            .delete()
+            .eq('id', id);
+        if (error) {
+            console.error('Error deleting item:', error);
+            return false;
+        }
+        return true;
+    }
+
 }
 
 // Export an instance of the PieceService class

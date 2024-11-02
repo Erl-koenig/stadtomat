@@ -28,6 +28,7 @@ const getPieces = async () => {
 
 const updatePiece = async (updatedPiece: Piece) => {
     const index = pieces.value.findIndex((p) => p.id === updatedPiece.id);
+    console.log('Updating piece:', updatedPiece);
     try {
         const res = await pieceService.updatePiece(updatedPiece);
         if (index !== -1) {
@@ -36,6 +37,18 @@ const updatePiece = async (updatedPiece: Piece) => {
         }
     } catch (error) {
         console.error('Error updating piece:', error);
+    }
+};
+
+const deletePiece = async (id: string) => {
+    console.log('Deleting piece:', id);
+    try {
+        const res = await pieceService.deletePiece(id);
+        if (res) {
+            pieces.value = pieces.value.filter((p) => p.id !== id);
+        }
+    } catch (error) {
+        console.error('Error deleting piece:', error);
     }
 };
 
@@ -86,12 +99,12 @@ const columns = [
     columnHelper.display({
         header: 'Action',
         cell: ({ row }) => {
-            return h(EditPiece, {
+            return [h(EditPiece, {
                 piece: row.original,
                 'onUpdate:piece': (updatedPiece: Piece) => {
                     updatePiece(updatedPiece);
                 },
-            });
+            }), h(Button, { class: 'bg-red-800', onClick: () => deletePiece(row.original.id) }, 'Delete')];
         },
     }),
 ];

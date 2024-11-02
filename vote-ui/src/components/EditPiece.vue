@@ -11,6 +11,16 @@ import DialogTitle from './ui/dialog/DialogTitle.vue';
 import DialogFooter from './ui/dialog/DialogFooter.vue';
 import DialogClose from './ui/dialog/DialogClose.vue';
 
+import * as z from 'zod'
+import { FormField } from './ui/form';
+import FormItem from './ui/form/FormItem.vue';
+import FormLabel from './ui/form/FormLabel.vue';
+import FormControl from './ui/form/FormControl.vue';
+import FormDescription from './ui/form/FormDescription.vue';
+import FormMessage from './ui/form/FormMessage.vue';
+import { toTypedSchema } from '@vee-validate/zod';
+import { Form, useForm } from 'vee-validate';
+
 const props = defineProps<{
     piece: Piece | null;
 }>();
@@ -21,6 +31,33 @@ const localPiece = ref<Piece>({
     created_at: '',
     upvote_count: 0
 });
+
+const imageFile = ref<File | null>(null);
+const fileInputKey = ref(0);
+
+const formSchema = toTypedSchema(
+    z.object({
+        title: z.string().min(2, 'Title must be at least 2 characters').max(50, 'Title is too long'),
+        description: z.string().min(5, 'Description must be at least 5 characters').max(500, 'Description is too long'),
+        category: z.string().optional(),
+        tag: z.string().optional(),
+        image: z.string().url().nullable().optional(),
+    })
+)
+
+const { handleSubmit, resetForm, setValues } = useForm({
+    validationSchema: formSchema,
+    initialValues: props.piece ? {
+        title: props.piece.title,
+        description: props.piece.description,
+        tag: props.piece.tag
+    } : {
+        title: '',
+        description: '',
+        tag: ''
+    }
+});
+
 
 watch(
     () => props.piece,
@@ -35,6 +72,15 @@ watch(
     { immediate: true }
 );
 
+
+
+const handleImageUpload = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    if (target.files && target.files[0]) {
+        imageFile.value = target.files[0]
+    }
+}
+
 const imageModel = computed({
     get: () => localPiece.value.image ?? '',
     set: (value: string) => {
@@ -42,16 +88,16 @@ const imageModel = computed({
     },
 });
 
-
-const savePiece = () => {
+const savePiece = (event: any) => {
+    console.log(`Saving piece: ${event}`);
+    console.log(`piece id: ${localPiece.value.id}`);
     if (localPiece.value) {
         console.log(`Saving piece: ${localPiece.value.title}`);
         emit('update:piece', localPiece.value);
     }
 };
-
-
 </script>
+
 <template>
     <Dialog>
         <DialogTrigger>
@@ -64,22 +110,77 @@ const savePiece = () => {
 
             <div div="w-full">
                 <div class="flex flex-wrap gap-2 items-center py-4 mb-2" v-if="localPiece">
-                    <div class="w-full">
-                        <label>Title: </label>
-                        <Input v-model="localPiece.title" label="Title" />
-                    </div>
-                    <div>
-                        <label>Description: </label>
-                        <textarea v-model="localPiece.description" label="Description"></textarea>
-                    </div>
-                    <div>
-                        <label>Tag: </label>
-                        <Input v-model="localPiece.tag" label="Tag" />
-                    </div>
-                    <div>
-                        <label>Image: </label>
-                        <Input v-model="imageModel" label="Image" />
-                    </div>
+                    <Form id="editForm">
+                        <FormField name="title">
+                            <FormItem>
+                                <FormLabel for="title">Title</FormLabel>
+                                <FormControl>
+                                    <Input v-model="localPiece.title" type="text" id="title" placeholder="Item title" />
+                                </FormControl>
+                                <FormDescription>
+                                    The name of your item. Must be at least 2 characters long.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        </FormField>
+                        <br>
+                        <br>
+                        <FormField name="description">
+                            <FormItem>
+                                <FormLabel for="description">Description</FormLabel>
+                                <FormControl>
+                                    <textarea v-model="localPiece.description" id="description"
+                                        placeholder="Item description"
+                                        class="border rounded-md p-2 w-full min-h-[80px]"></textarea>
+                                </FormControl>
+                                <FormDescription>
+                                    Describe your item in detail. Minimum of 5 characters.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        </FormField>
+                        <br>
+                        <br>
+                        <FormField name="tag">
+                            <FormItem>
+                                <FormLabel for="tag">Tag</FormLabel>
+                                <FormControl>
+                                    <Input v-model="localPiece.tag" type="text" id="tag" placeholder="Item tag" />
+                                </FormControl>
+                                <FormDescription>
+                                    The tag of your item.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        </FormField>
+                        <br>
+                        <FormField name="image">
+                            <FormItem>
+                                <FormLabel for="image">Picture</FormLabel>
+                                <div v-if="imageModel">
+                                    <img :src="imageModel" alt="item image" class="w-20 h-20 rounded-md" />
+                                </div>
+                                <Input id="image" type="file" @change="handleImageUpload" :key="fileInputKey" />
+                            </FormItem>
+                        </FormField>
+
+                        <!-- <div class="w-full">
+                            <label>Title: </label>
+                            <Input v-model="localPiece.title" label="Title" />
+                        </div>
+                        <div>
+                            <label>Description: </label>
+                            <textarea v-model="localPiece.description" label="Description"></textarea>
+                        </div>
+                        <div>
+                            <label>Tag: </label>
+                            <Input v-model="localPiece.tag" label="Tag" />
+                        </div>
+                        <div>
+                            <label>Image: </label>
+                            <Input v-model="imageModel" label="Image" />
+                        </div> -->
+                    </Form>
                 </div>
             </div>
             <DialogFooter>
@@ -92,6 +193,4 @@ const savePiece = () => {
             </DialogFooter>
         </DialogContent>
     </Dialog>
-
-
 </template>
