@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { pieceService } from '@/services/pieceService';
-import { Piece } from '@/types';
+import { Piece, Category } from '@/types';
 import { createColumnHelper } from '@tanstack/vue-table';
 import { h, onMounted, ref } from 'vue';
 import EditPiece from './EditPiece.vue';
@@ -9,6 +9,7 @@ import DataTable from './DataTable.vue';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { loginService } from '@/services/loginService';
+import { Label } from './ui/label';
 
 const pieces = ref<Piece[]>([]);
 const username = ref('');
@@ -19,6 +20,7 @@ const getPieces = async () => {
     try {
         const res = await pieceService.fetchPieces();
         if (res) {
+            console.log(res);
             pieces.value = res;
         }
     } catch (error) {
@@ -30,11 +32,9 @@ const updatePiece = async (updatedPiece: Piece) => {
     const index = pieces.value.findIndex((p) => p.id === updatedPiece.id);
     console.log('Updating piece:', updatedPiece);
     try {
-        const res = await pieceService.updatePiece(updatedPiece);
-        if (index !== -1) {
-            pieces.value[index] = res;
-            console.log(res);
-        }
+        const res = await pieceService.updatePiece(updatedPiece, pieces.value[index]);
+        alert('Piece updated successfully');
+        getPieces();
     } catch (error) {
         console.error('Error updating piece:', error);
     }
@@ -75,12 +75,18 @@ const columns = [
     }),
     columnHelper.accessor('category', {
         header: 'Category',
-        cell: ({ row }) => row.getValue('category'),
+        cell: ({ row }) => {
+            let cat = row.getValue('category') as Category;
+            if (cat && cat.id){
+                return cat.title
+            }
+            return ''
+            },
     }),
-    columnHelper.accessor('tag', {
-        header: 'Tag',
-        cell: ({ row }) => row.getValue('tag'),
-    }),
+columnHelper.accessor('tag', {
+    header: 'Tag',
+    cell: ({ row }) => row.getValue('tag'),
+}),
     columnHelper.accessor('image', {
         header: 'Image',
         cell: ({ row }) => {
@@ -104,7 +110,7 @@ const columns = [
                 'onUpdate:piece': (updatedPiece: Piece) => {
                     updatePiece(updatedPiece);
                 },
-            }), h(Button, { class: 'bg-red-800', onClick: () => deletePiece(row.original.id) }, 'Delete')];
+            }), h(Button, { class: 'bg-red-800', onClick: () => deletePiece(row.original.id) }, () => 'Delete')];
         },
     }),
 ];

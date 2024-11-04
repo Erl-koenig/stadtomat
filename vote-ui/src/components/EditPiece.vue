@@ -141,7 +141,7 @@ const savePiece = (event: any) => {
                         </FormField>
                         <br>
                         <br>
-                        <FormField name="tag">
+                        <!-- <FormField name="tag">
                             <FormItem>
                                 <FormLabel for="tag">Tag</FormLabel>
                                 <FormControl>
@@ -152,7 +152,7 @@ const savePiece = (event: any) => {
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
-                        </FormField>
+                        </FormField> -->
                         <br>
                         <FormField name="image">
                             <FormItem>
@@ -163,23 +163,6 @@ const savePiece = (event: any) => {
                                 <Input id="image" type="file" @change="handleImageUpload" :key="fileInputKey" />
                             </FormItem>
                         </FormField>
-
-                        <!-- <div class="w-full">
-                            <label>Title: </label>
-                            <Input v-model="localPiece.title" label="Title" />
-                        </div>
-                        <div>
-                            <label>Description: </label>
-                            <textarea v-model="localPiece.description" label="Description"></textarea>
-                        </div>
-                        <div>
-                            <label>Tag: </label>
-                            <Input v-model="localPiece.tag" label="Tag" />
-                        </div>
-                        <div>
-                            <label>Image: </label>
-                            <Input v-model="imageModel" label="Image" />
-                        </div> -->
                     </Form>
                 </div>
             </div>
