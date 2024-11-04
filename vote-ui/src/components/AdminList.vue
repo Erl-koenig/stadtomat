@@ -2,7 +2,7 @@
 
 import { pieceService } from '@/services/pieceService';
 import { Piece, Category } from '@/types';
-import { createColumnHelper } from '@tanstack/vue-table';
+import { ColumnDef, createColumnHelper } from '@tanstack/vue-table';
 import { h, onMounted, ref } from 'vue';
 import EditPiece from './EditPiece.vue';
 import DataTable from './DataTable.vue';
@@ -32,9 +32,12 @@ const updatePiece = async (updatedPiece: Piece) => {
     const index = pieces.value.findIndex((p) => p.id === updatedPiece.id);
     console.log('Updating piece:', updatedPiece);
     try {
-        const res = await pieceService.updatePiece(updatedPiece, pieces.value[index]);
-        alert('Piece updated successfully');
-        getPieces();
+        let res = await pieceService.updatePiece(updatedPiece, pieces.value[index]);
+        if (res) {
+            alert('Piece updated successfully');
+            getPieces();
+        }
+
     } catch (error) {
         console.error('Error updating piece:', error);
     }
@@ -64,7 +67,7 @@ onMounted(() => {
 
 
 const columnHelper = createColumnHelper<Piece>();
-const columns = [
+const columns: ColumnDef<Piece, any>[] = [
     columnHelper.accessor('title', {
         header: 'Title',
         cell: ({ row }) => row.getValue('title'),
@@ -77,16 +80,16 @@ const columns = [
         header: 'Category',
         cell: ({ row }) => {
             let cat = row.getValue('category') as Category;
-            if (cat && cat.id){
+            if (cat && cat.id) {
                 return cat.title
             }
             return ''
-            },
+        },
     }),
-columnHelper.accessor('tag', {
-    header: 'Tag',
-    cell: ({ row }) => row.getValue('tag'),
-}),
+    columnHelper.accessor('tag', {
+        header: 'Tag',
+        cell: ({ row }) => row.getValue('tag'),
+    }),
     columnHelper.accessor('image', {
         header: 'Image',
         cell: ({ row }) => {
@@ -156,8 +159,7 @@ function doLogin() {
             </div>
 
         </div>
-    </template>
-    <template v-else>
+    </template><template v-else>
         <div class="">
             <div v-if="pieces">
                 <DataTable :columns="columns" :data="pieces" />
