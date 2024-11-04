@@ -7,7 +7,9 @@ class PieceService {
     async fetchPieces(): Promise<Piece[]> {
         const { data, error } = await supabase
             .from('piece')
-            .select('id, title, description, category, tag, image, created_at, upvote_count');
+            .select(`
+                id, title, description, category (id, title, description), tag, image, created_at, upvote_count
+            `);
 
         if (error) {
             console.error('Error fetching items:', error);
@@ -62,16 +64,17 @@ class PieceService {
 
     }
 
-    async updatePiece(piece: Piece): Promise<any> {
+    async updatePiece(piece: Piece, originalPiece: Piece): Promise<any> {
+        const updateData: Partial<Piece> = {};
+        if (piece.title && piece.title !== originalPiece.title) updateData.title = piece.title;
+        if (piece.description && piece.description !== originalPiece.description) updateData.description = piece.description;
+        if (piece.category && piece.category !== originalPiece.category) updateData.category = piece.category;
+        if (piece.tag && piece.tag !== originalPiece.tag) updateData.tag = piece.tag;
+        if (piece.image && piece.image !== originalPiece.image) updateData.image = piece.image;
+
         const { data, error } = await supabase
             .from('piece')
-            .update({
-                title: piece.title,
-                description: piece.description,
-                category: piece.category,
-                tag: piece.tag,
-                image: piece.image,
-            })
+            .update(updateData)
             .eq('id', piece.id);
         if (error) {
             console.error('Error updating item:', error);
@@ -82,7 +85,9 @@ class PieceService {
     async fetchPieceById(id: string): Promise<Piece | null> {
         const { data, error } = await supabase
             .from('piece')
-            .select('id, title, description, category, tag, image, created_at, upvote_count')
+            .select(`
+                id, title, description, category (id, title, description), tag, image, created_at, upvote_count
+            `)
             .eq('id', id)
             .single();
 
