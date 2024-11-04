@@ -45,7 +45,7 @@ const formSchema = toTypedSchema(
     })
 )
 
-const { handleSubmit, resetForm, setValues } = useForm({
+useForm({
     validationSchema: formSchema,
     initialValues: props.piece ? {
         title: props.piece.title,

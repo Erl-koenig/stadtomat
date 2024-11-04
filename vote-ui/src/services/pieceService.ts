@@ -8,14 +8,14 @@ class PieceService {
         const { data, error } = await supabase
             .from('piece')
             .select(`
-                id, title, description, category (id, title, description), tag, image, created_at, upvote_count
+                id, title, description, category (id, title, description, created_at), tag, image, created_at, upvote_count
             `);
 
         if (error) {
-            console.error('Error fetching items:', error);
+            console.error('Error fetching item:', error);
             return [];
         }
-        if (!data) {
+        if (!data || data.length === 0) {
             return [];
         }
         return data.map(item => ({
@@ -23,7 +23,7 @@ class PieceService {
             image: item.image
                 ? `https://lzirjhubrvqfumpsmenv.supabase.co/storage/v1/object/public/piece_image/${item.image}`
                 : null,
-        }));
+        })) as unknown as Piece[];
     }
 
     async searchPieces(searchTerm: string): Promise<Piece[]> {
@@ -52,7 +52,7 @@ class PieceService {
 
 
     async updatePieceUpvoteCount(id: string, upvoteCount: number): Promise<boolean> {
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('piece')
             .update({ upvote_count: upvoteCount })
             .eq('id', id);
@@ -86,8 +86,8 @@ class PieceService {
         const { data, error } = await supabase
             .from('piece')
             .select(`
-                id, title, description, category (id, title, description), tag, image, created_at, upvote_count
-            `)
+            id, title, description, category (id, title, description, created_at), tag, image, created_at, upvote_count
+        `)
             .eq('id', id)
             .single();
 
@@ -103,7 +103,7 @@ class PieceService {
             image: data.image
                 ? `https://lzirjhubrvqfumpsmenv.supabase.co/storage/v1/object/public/piece_image/${data.image}`
                 : null,
-        };
+        }as unknown as Piece;;
     }
 
     async deletePiece(id: string): Promise<boolean> {
