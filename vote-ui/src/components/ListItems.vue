@@ -117,6 +117,7 @@ export interface Item {
   upvote_count: number;
 }
 
+
 const fetchItems = async () => {
   const { data, error } = await supabase
     .from('piece')
@@ -167,7 +168,7 @@ const columns = [
     cell: ({ row }) => formatDate(row.getValue('created_at')),
   }),
   columnHelper.accessor('upvote_count', {
-    header: 'Upvotes',
+    header: 'Votes',
     cell: ({ row }) => row.getValue('upvote_count'),
   }),
   columnHelper.display({
@@ -239,6 +240,7 @@ const handleVote = async (itemId: string, hasVoted: boolean) => {
 };
 
 const data = ref<Item[]>([]);
+
 
 onMounted(async () => {
   data.value = await fetchItems();

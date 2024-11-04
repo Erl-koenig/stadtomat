@@ -35,13 +35,13 @@
       <!-- File upload -->
       <div>
         <Label for="image">Picture</Label>
-        <Input id="image" type="file" @change="handleImageUpload" :key="fileInputKey" />
+        <Input id="image" type="file" class="p-0" @change="handleImageUpload" :key="fileInputKey" />
       </div>
 
       <!-- Buttons -->
       <div class="flex justify-between mt-4">
-        <Button type="button" @click="clearForm" class="bg-medium text-white hover:bg-light">Clear</Button>
-        <Button type="submit" class="bg-darkest hover:bg-light">Submit</Button>
+        <Button type="button" @click="clearForm" class="bg-ostSecondary text-white hover:bg-light">Clear</Button>
+        <Button type="submit" class="bg-ostMain hover:bg-light">Submit</Button>
       </div>
     </form>
   </div>

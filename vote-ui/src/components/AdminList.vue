@@ -140,7 +140,7 @@ function doLogin() {
 <template>
     <template v-if="!loggedIn">
         <div class="w-full">
-            <div class="grid gap-4 py-4">
+            <div class="flex gap-2 items-center py-4">
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="username" class="text-right">
                         Username
@@ -159,11 +159,11 @@ function doLogin() {
             </div>
 
         </div>
-    </template><template v-else>
-        <div class="">
-            <div v-if="pieces">
-                <DataTable :columns="columns" :data="pieces" />
-            </div>
+    </template>
+    <template v-else>
+        <div class="w-full" v-if="pieces">
+            <h2 class="text-center m-4">Pieces list</h2>
+            <DataTable :columns="columns" :data="pieces" />
         </div>
     </template>
 </template>
