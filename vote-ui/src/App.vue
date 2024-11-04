@@ -9,6 +9,12 @@
             alt="Stadtomat Logo" />
         </a>
         <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+
+          <button v-if="loginService.isLoggedIn() === true" type="button" @click="loginService.logout"
+            class="text-white bg-ostMain hover:bg-ostSecondary focus:ring-2 focus:outline-none focus:ring-ostDark font-medium rounded-lg text-sm px-4 py-2 mr-2 text-center">
+            Logout
+          </button>
+
           <button type="button"
             class="text-white bg-ostMain hover:bg-ostSecondary focus:ring-2 focus:outline-none focus:ring-ostDark font-medium rounded-lg text-sm px-4 py-2 text-center">
             Contact
@@ -48,7 +54,15 @@
                 Votes
               </router-link>
             </li>
+            <li>
+              <router-link to="/admin" @click="closeMenu"
+                class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-ostSecondary md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                active-class="text-ostMain">
+                Admin
+              </router-link>
+            </li>
           </ul>
+
         </div>
       </div>
     </nav>
@@ -60,7 +74,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterView } from 'vue-router';
-
+import { loginService } from './services/loginService';
 const isMenuOpen = ref(false);
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
