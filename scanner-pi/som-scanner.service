@@ -1,0 +1,14 @@
+[Unit]
+Description=Stadtomat Full Scanner Service
+After=network.target
+
+[Service]
+ExecStart=/home/pi/Documents/qr-code-scanner/env/bin/python /home/pi/Documents/qr-code-scanner/src/full-scanner.py
+WorkingDirectory=/home/pi/Documents/qr-code-scanner/src
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target

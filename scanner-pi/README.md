@@ -50,3 +50,18 @@ python scanner.py --input variable-sizes-start-15mm.png
 cmd to take single shot with pi cam.
 
 libcamera-still -q 100 -o test.jpg
+
+
+## Make Autorun
+
+copy the file `som-scanner.service` file to **/etc/systemd/system/som-scanner.service**
+
+```bash
+sudo cp som-scanner.service /etc/systemd/system/som-scanner.service
+sudo chmod 644 /etc/systemd/system/som-scanner.service
+
+sudo systemctl enable som-scanner.service  # enable autostart
+sudo systemctl status som-scanner.service # show state
+sudo systemctl start som-scanner.service # starts immediately the service
+sudo systemctl stop som-scanner.service # stops service
+```
