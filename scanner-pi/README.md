@@ -31,7 +31,7 @@ sudo apt-get install python3-rpi.gpio
 
 1. Install python3 and pip3 in server/machine
 1. Install requirements globally using
-        `pip3 install pyzbar opencv-python argparse`
+        `pip3 install pyzbar opencv-python argparse supabase`
         or
         `pip3 install -r requirements.txt`
 1. make sure have following linux dependencies installed 
